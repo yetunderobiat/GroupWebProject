@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Babcock University - Seminar Management System</title>
+    <!-- Link to Inter font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Inline CSS for styling (replaces Tailwind) -->
+    <style>
+        /* CSS Variables for Easy Theme Toggling */
+        :root {
+            /* Light Mode Defaults */
+            --color-primary: #004D99; /* Dark University Blue */
+            --color-accent: #2563EB;
+            --color-success: #10B981;
+            --color-text-dark: #1F2937;
+            --color-text-light: #4B5563;
+            --color-border: #E5E7EB;
+            --color-bg-body: #ffffff;
+            --color-bg-light: #F8F9FA;
+            --color-bg-card: #ffffff;
+        }
+
+        /* Dark Mode Overrides */
+        body.dark-mode {
+            --color-primary: #90CAF9; /* Lighter blue for contrast */
+            --color-accent: #60A5FA;
+            --color-success: #6EE7B7;
+            --color-text-dark: #F8F9FA; /* White text */
+            --color-text-light: #D1D5DB; /* Light gray text */
+            --color-border: #374151;
+            --color-bg-body: #121212; /* Dark background */
+            --color-bg-light: #1F2937; /* Darker sections */
+            --color-bg-card: #1e1e1e; /* Card background */
+        }
+
+        /* General Styles */
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--color-bg-body);
+            color: var(--color-text-dark);
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .container {
+            max-width: 1280px;
+            margin-left: auto;
+            margin-right: auto;
+            padding-left: 1rem;
+            padding-right: 1rem;
+        }
+
+        a {
+            text-decoration: none;
+            color: var(--color-accent);
+        }
+
+        /* Header Styles */
+        .header {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            border-bottom: 1px solid var(--color-border);
+            background-color: var(--color-bg-card);
+        }
+
+        .warning-bar {
+            background-color: var(--color-primary);
+            color: white;
+            padding: 0.5rem 1rem;
+            text-align: center;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.875rem;
+        }
+
+        .warning-bar a {
+            color: yellow;
+            text-decoration: underline;
+            font-weight: 600;
+        }
+
+        .nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-top: 0.75rem;
+            padding-bottom: 0.75rem;
+        }
+
+        .logo-group {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logo-title {
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: var(--color-primary);
+            letter-spacing: -0.025em;
+        }
+
+        .logo-subtitle {
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: var(--color-text-light);
+            display: none;
+        }
+        @media (min-width: 640px) {
+            .logo-subtitle { display: block; }
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .theme-toggle-btn {
+            padding: 0.25rem;
+            border: none;
+            background: none;
+            cursor: pointer;
+            color: var(--color-text-light);
+            transition: color 0.15s;
+        }
+        .theme-toggle-btn:hover {
+            color: var(--color-primary);
+        }
+        .theme-toggle-btn svg {
+            width: 1.25rem;
+            height: 1.25rem;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 2;
+        }
+
+        .nav-link {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--color-text-light);
+            transition: color 0.15s;
+        }
+        .nav-link:hover {
+            color: var(--color-primary);
+        }
+
+        .btn-signup {
+            padding: 0.5rem 1rem;
+            background-color: var(--color-accent);
+            color: white;
+            font-weight: 600;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.2s;
+        }
+        .btn-signup:hover {
+            background-color: var(--color-primary);
+        }
+
+        /* Hero Section */
+        .hero-section {
+            text-align: center;
+            padding: 5rem 1rem;
+            background-color: var(--color-bg-light);
+        }
+        @media (min-width: 768px) {
+            .hero-section { padding: 8rem 1rem; }
+        }
+
+        .hero-title {
+            font-size: 2.25rem;
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+            line-height: 1.1;
+        }
+        @media (min-width: 768px) {
+            .hero-title { font-size: 3.75rem; }
+        }
+
+        .hero-text {
+            font-size: 1.125rem;
+            color: var(--color-text-light);
+            margin-bottom: 2.5rem;
+            max-width: 48rem;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        @media (min-width: 768px) {
+            .hero-text { font-size: 1.25rem; }
+        }
+
+        .hero-buttons {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 1rem;
+        }
+        @media (min-width: 640px) {
+            .hero-buttons {
+                flex-direction: row;
+                gap: 1rem;
+            }
+        }
+
+        .btn-primary, .btn-secondary {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.75rem 1.5rem;
+            font-weight: 600;
+            border-radius: 0.5rem;
+            transition: all 0.3s;
+            width: 100%;
+        }
+        @media (min-width: 640px) {
+            .btn-primary, .btn-secondary { width: auto; }
+        }
+
+        .btn-primary {
+            background-color: var(--color-accent);
+            color: white;
+            box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.5);
+        }
+        .btn-primary:hover {
+            background-color: var(--color-primary);
+            transform: scale(1.01);
+        }
+
+        .btn-secondary {
+            border: 1px solid var(--color-border);
+            background-color: var(--color-bg-card);
+            color: var(--color-primary);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        .btn-secondary:hover {
+            background-color: var(--color-bg-light);
+        }
+
+        .btn-icon {
+            margin-left: 0.5rem;
+            width: 1.25rem;
+            height: 1.25rem;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 2;
+        }
+
+        /* Feature Cards Grid */
+        .features-section {
+            padding-top: 4rem;
+            padding-bottom: 6rem;
+        }
+        @media (min-width: 768px) {
+            .features-section { padding-top: 6rem; padding-bottom: 6rem; }
+        }
+
+        .cards-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+        }
+        @media (min-width: 768px) {
+            .cards-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+        @media (min-width: 1024px) {
+            .cards-grid { grid-template-columns: repeat(3, 1fr); }
+        }
+
+        .feature-card {
+            background-color: var(--color-bg-card);
+            padding: 2rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+            border: 1px solid var(--color-border);
+            transition: box-shadow 0.3s;
+            display: flex;
+            flex-direction: column;
+        }
+        .feature-card:hover {
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+
+        .icon-box {
+            padding: 0.75rem;
+            width: fit-content;
+            border-radius: 0.5rem;
+            background-color: rgba(37, 99, 235, 0.1); /* Light Blue BG */
+            color: var(--color-accent);
+            margin-bottom: 1rem;
+        }
+        .icon-box svg {
+            width: 1.5rem;
+            height: 1.5rem;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 2;
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .card-description {
+            color: var(--color-text-light);
+        }
+        
+        /* Mid-Section and Benefits */
+        .mid-section {
+            padding: 4rem 1rem;
+            background-color: var(--color-bg-light);
+            text-align: center;
+        }
+
+        .benefits-section {
+            padding-top: 4rem;
+            padding-bottom: 6rem;
+        }
+        @media (min-width: 768px) {
+            .benefits-grid {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 3rem;
+            }
+        }
+
+        .benefit-list h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+        }
+
+        .benefit-list ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .benefit-list li {
+            display: flex;
+            align-items: flex-start;
+            color: var(--color-text-light);
+        }
+
+        .check-icon {
+            width: 1.25rem;
+            height: 1.25rem;
+            margin-right: 0.75rem;
+            color: var(--color-success);
+            flex-shrink: 0;
+            margin-top: 0.25rem;
+        }
+
+        /* CTA Section */
+        .cta-section {
+            padding: 4rem 1rem;
+            background-color: var(--color-bg-light);
+            text-align: center;
+        }
+
+        .cta-title {
+            font-size: 1.875rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+        }
+        @media (min-width: 768px) {
+            .cta-title { font-size: 2.25rem; }
+        }
+
+        .cta-text {
+            font-size: 1.125rem;
+            color: var(--color-text-light);
+            margin-bottom: 2rem;
+        }
+
+        .cta-button {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.75rem 2rem;
+            background-color: var(--color-accent);
+            color: white;
+            font-weight: 600;
+            border-radius: 0.5rem;
+            box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.5);
+            transition: all 0.3s;
+            font-size: 1.125rem;
+        }
+        .cta-button:hover {
+            background-color: var(--color-primary);
+            transform: scale(1.02);
+        }
+        .cta-button svg {
+            margin-left: 0.75rem;
+            width: 1.5rem;
+            height: 1.5rem;
+            stroke: white;
+            fill: none;
+            stroke-width: 2;
+        }
+
+        /* Footer */
+        .footer {
+            padding: 2rem 1rem;
+            border-top: 1px solid var(--color-border);
+            text-align: center;
+            font-size: 0.875rem;
+            color: var(--color-text-light);
+            background-color: var(--color-bg-card);
+        }
+
+    </style>
+</head>
+<body id="body-element">
+
+    <!-- 1. Header Section -->
+    <header class="header">
+        <!-- Development Warning Bar -->
+        <div class="warning-bar">
+            <p style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%;">
+                This is a temporary development preview, and these links are not for public use. 
+                <a href="#">Deploy your app</a> 
+                for secure sharing or use an invite link.
+            </p>
+            <button class="theme-toggle-btn" style="color: white;" onclick="toggleTheme()">
+                <!-- SVG for close icon (no function, just visual) -->
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18"/><path d="M6 6l12 12"/></svg>
+            </button>
+        </div>
+
+        <!-- Main Navigation Bar -->
+        <nav class="container nav">
+            <div class="logo-group">
+                <!-- Logo/Title -->
+                <a href="#" class="logo-title" style="color: var(--color-primary);">Babcock University</a>
+                <span class="logo-subtitle">Seminar Management System</span>
+            </div>
+            
+            <div class="nav-actions">
+                <!-- Theme Toggle Button -->
+                <button id="theme-toggle" class="theme-toggle-btn" onclick="toggleTheme()">
+                    <!-- SVG for Sun/Moon Icon (Initial state: Sun for Light Mode) -->
+                    <svg id="theme-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-sun"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="M4.93 4.93l1.41 1.41"/><path d="M17.66 17.66l1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="M6.34 17.66l-1.41 1.41"/><path d="M19.07 4.93l-1.41 1.41"/></svg>
+                </button>
+                
+                <!-- Login/Sign Up Buttons -->
+                <a href="login.html" class="nav-link hidden-on-small" style="color: var(--color-text-light); display: none;">Login</a>
+                <a href="login.html" class="nav-link visible-on-small" style="color: var(--color-primary);">Login</a>
+                <a href="signin.html" class="btn-signup">Sign Up</a>
+            </div>
+        </nav>
+    </header>
+
+    <!-- 2. Hero Section -->
+    <section class="hero-section">
+        <div class="container">
+            <h1 class="hero-title">
+                Streamline Your Seminar Management
+            </h1>
+            <p class="hero-text">
+                A comprehensive platform for scheduling seminars, managing seating arrangements, tracking attendance, and generating detailed reports for Babcock University.
+            </p>
+            <div class="hero-buttons">
+                <a href="signin.html" class="btn-primary">
+                    Get Started 
+                    <svg class="btn-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke="white"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>
+                </a>
+                <a href="login.html" class="btn-secondary">
+                    Login to Dashboard
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- 3. Feature Cards Grid -->
+    <section class="features-section">
+        <div class="container cards-grid">
+            <!-- Card 1: Seminar Management -->
+            <div class="feature-card">
+                <div class="icon-box">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M8 2v2"/><path d="M16 2v2"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/><path d="M12 16h-4"/><path d="M16 16h-4"/><path d="M8 12h1v1h-1z"/></svg>
+                </div>
+                <h3 class="card-title">Seminar Management</h3>
+                <p class="card-description">Schedule seminars with detailed topic, speaker, and venue information</p>
+            </div>
+            
+            <!-- Card 2: Seating Arrangement -->
+            <div class="feature-card">
+                <div class="icon-box">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0116 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                </div>
+                <h3 class="card-title">Seating Arrangement</h3>
+                <p class="card-description">Visual seating configurator with drag-and-drop seat assignment</p>
+            </div>
+
+            <!-- Card 3: Student Roster -->
+            <div class="feature-card">
+                <div class="icon-box">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+                </div>
+                <h3 class="card-title">Student Roster</h3>
+                <p class="card-description">Manage departmental students with CSV import and batch operations</p>
+            </div>
+
+            <!-- Card 4: Attendance Tracking -->
+            <div class="feature-card">
+                <div class="icon-box">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg>
+                </div>
+                <h3 class="card-title">Attendance Tracking</h3>
+                <p class="card-description">Mark attendance sorted by seat location for rapid verification</p>
+            </div>
+
+            <!-- Card 5: Reports & Analytics -->
+            <div class="feature-card">
+                <div class="icon-box">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 20V10"/><path d="M18 20V4"/><path d="M6 20v-4"/></svg>
+                </div>
+                <h3 class="card-title">Reports & Analytics</h3>
+                <p class="card-description">Comprehensive attendance reports and faculty comparison analytics</p>
+            </div>
+            
+            <!-- Card 6: Placeholder for 3x2 Grid Alignment (Invisible on large screens) -->
+            <div class="feature-card" style="visibility: hidden; display: none;"></div> 
+            <style>@media (min-width: 1024px) { .feature-card:last-child { display: block; visibility: hidden; } }</style>
+        </div>
+    </section>
+
+    <!-- Mid-Section Separator/Callout -->
+    <section class="mid-section">
+        <div class="container">
+            <h2 class="hero-title" style="font-size: 2rem;">
+                Why Choose Our System?
+            </h2>
+            <p class="hero-text" style="font-size: 1.125rem; margin-bottom: 0;">
+                Designed specifically for university seminar management.
+            </p>
+        </div>
+    </section>
+
+    <!-- 5. Benefits Section -->
+    <section class="benefits-section">
+        <div class="container benefits-grid">
+            <!-- Efficient Workflow Column -->
+            <div class="benefit-list">
+                <h3>Efficient Workflow</h3>
+                <ul>
+                    <li>
+                        <span class="check-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg>
+                        </span>
+                        <span>Automatic student assignment to seminars by department</span>
+                    </li>
+                    <li>
+                        <span class="check-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg>
+                        </span>
+                        <span>Visual and list-based seating configuration options</span>
+                    </li>
+                    <li>
+                        <span class="check-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg>
+                        </span>
+                        <span>Bulk operations for quick data management</span>
+                    </li>
+                    <li>
+                        <span class="check-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg>
+                        </span>
+                        <span>CSV import/export for seamless data integration</span>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Powerful Analytics Column -->
+            <div class="benefit-list">
+                <h3>Powerful Analytics</h3>
+                <ul>
+                    <li>
+                        <span class="check-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg>
+                        </span>
+                        <span>Faculty-wide attendance comparison reports</span>
+                    </li>
+                    <li>
+                        <span class="check-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg>
+                        </span>
+                        <span>Automated absentee list generation</span>
+                    </li>
+                    <li>
+                        <span class="check-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg>
+                        </span>
+                        <span>Seminar history with speaker tracking</span>
+                    </li>
+                    <li>
+                        <span class="check-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg>
+                        </span>
+                        <span>Visual charts and exportable reports</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- 6. CTA Section -->
+    <section class="cta-section">
+        <div class="container">
+            <h2 class="cta-title">
+                Ready to Get Started?
+            </h2>
+            <p class="cta-text">
+                Join Babcock University's modern seminar management platform today
+            </p>
+            <a href="signin.html" class="cta-button">
+                Create Your Account 
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke="white"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>
+            </a>
+        </div>
+    </section>
+
+    <!-- 7. Footer -->
+    <footer class="footer">
+        <div class="container">
+            &copy; 2024 Babcock University. All rights reserved.
+        </div>
+    </footer>
+
+    <!-- Plain JavaScript for Theme Toggling -->
+    <script>
+        const body = document.getElementById('body-element');
+        const themeIcon = document.getElementById('theme-icon');
+
+        // Function to set theme based on preference or localStorage
+        function initializeTheme() {
+            const isDarkMode = localStorage.getItem('darkMode') === 'true';
+            if (isDarkMode) {
+                body.classList.add('dark-mode');
+                updateIcon(true);
+            } else {
+                body.classList.remove('dark-mode');
+                updateIcon(false);
+            }
+        }
+
+        // Function to update the icon based on the current mode
+        function updateIcon(isDarkMode) {
+            // Moon icon for Light mode button (to switch TO Dark mode)
+            // Sun icon for Dark mode button (to switch TO Light mode)
+            if (isDarkMode) {
+                // Currently Dark Mode, show Sun to switch to Light
+                themeIcon.innerHTML = '<circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="M4.93 4.93l1.41 1.41"/><path d="M17.66 17.66l1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="M6.34 17.66l-1.41 1.41"/><path d="M19.07 4.93l-1.41 1.41"/>';
+            } else {
+                // Currently Light Mode, show Moon to switch to Dark
+                themeIcon.innerHTML = '<path d="M12 3a6 6 0 009 9 9 9 0 11-9-9z"/>';
+            }
+        }
+
+        // Main toggle function
+        function toggleTheme() {
+            const isDarkMode = body.classList.toggle('dark-mode');
+            localStorage.setItem('darkMode', isDarkMode);
+            updateIcon(isDarkMode);
+        }
+
+        // Initialize theme when the page loads
+        window.onload = initializeTheme;
+    </script>
+</body>
+</html
